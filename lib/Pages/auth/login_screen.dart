@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/auth/signup_screen.dart';
 
-import '../../services/auth_serice.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/signup_button.dart';
 import '../../widgets/snack_bar.dart';
-import '../Home/home_screen.dart';
+import '../screens/onboarding_screen.dart' ;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +21,7 @@ class _SignupScreenState extends State<LoginScreen> {
   bool isLoding = false;
   bool isPasswordHidden = true;
 
-  final AuthSerice _authSerice = AuthSerice();
+  final AuthService _authSerice = AuthService();
 
   void _login() async {
     String email = emailController.text.trim();
@@ -40,7 +40,7 @@ class _SignupScreenState extends State<LoginScreen> {
         isLoding = false;
       });
       showSnackbar(context, "Login up successful");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OnboardingScreen()));
     } else {
       setState(() {
         isLoding = false;

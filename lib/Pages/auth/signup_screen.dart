@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/auth_serice.dart';
+import '../../services/auth_service.dart';
 
 import '../../widgets/signup_button.dart';
 import '../../widgets/snack_bar.dart';
@@ -18,7 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isLoding = false;
   bool isPasswordHidden = true;
 
-  final AuthSerice _authSerice = AuthSerice();
+  final AuthService _authSerice = AuthService();
 
   void _signUp() async {
     String email = emailController.text.trim();

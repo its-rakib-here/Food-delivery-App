@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/auth/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthSerice {
+class AuthService {
   final supabase = Supabase.instance.client;
 
   //sign up function
