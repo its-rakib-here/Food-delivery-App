@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/auth/signup_screen.dart';
 
+import '../../services/auth_serice.dart';
 import '../../widgets/signup_button.dart';
+import '../../widgets/snack_bar.dart';
+import '../Home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +16,39 @@ class LoginScreen extends StatefulWidget {
 class _SignupScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+
+  bool isLoding = false;
+  bool isPasswordHidden = true;
+
+  final AuthSerice _authSerice = AuthSerice();
+
+  void _login() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if(!mounted) return;
+
+    setState(() {
+      isLoding = true;
+    });
+
+    final result = await _authSerice.login(email, password);
+
+    if (result == null) {
+      setState(() {
+        isLoding = false;
+      });
+      showSnackbar(context, "Login up successful");
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+    } else {
+      setState(() {
+        isLoding = false;
+      });
+      showSnackbar(context, "Signup Failed: $result");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +81,26 @@ class _SignupScreenState extends State<LoginScreen> {
                   border: OutlineInputBorder(),
                   labelText: "Password",
                   suffixIcon: IconButton(
-                    onPressed: (){},
-                    icon: Icon(Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        isPasswordHidden = !isPasswordHidden;
+                      });
+                    },
+                    icon: Icon(
+                      isPasswordHidden
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
                   ),
-
                 ),
+                obscureText: isPasswordHidden,
               ),
               SizedBox(height: 20,),
 
               SizedBox(width: double.maxFinite,
-                  child: SignupButton(onTap: (){}, buttonText: "Login",),),
+                  child: SignupButton(onTap: (){
+                    _login();
+                  }, buttonText: "Login",),),
               SizedBox(height: 20,),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Text("Don't have an account?",
