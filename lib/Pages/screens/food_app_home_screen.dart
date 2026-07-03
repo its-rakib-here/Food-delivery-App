@@ -1,5 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/utils/consts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../models/categories_model.dart';
 
 class FoodAppHomeScreen extends StatefulWidget {
   const FoodAppHomeScreen({super.key});
@@ -9,6 +13,46 @@ class FoodAppHomeScreen extends StatefulWidget {
 }
 
 class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
+  late Future<List<CategoryModel>> futureCategories = fetchCatagories();
+  List<CategoryModel> categories = [];
+  String? selectedCategory;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+    _initializeData();
+  }
+
+  void _initializeData() async {
+    try {
+      final categories = await futureCategories;
+      if (categories.isNotEmpty) {
+        setState(() {
+          this.categories = categories;
+          selectedCategory = categories[0].name;
+        });
+      }
+    } catch (e) {
+      print("Error initializing data: $e");
+    }
+  }
+
+  Future<List<CategoryModel>> fetchCatagories() async {
+    try {
+      final response = await Supabase.instance.client
+          .from("category_item")
+          .select();
+      return (response as List)
+          .map((json) => CategoryModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print("Error fetching category : $e");
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,10 +60,123 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
 
       appBar: appbarParts(),
 
-      body: Column(children: [appBanner()
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                appBanner(),
+                SizedBox(height: 25),
+                Text(
+                  "Categories",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
 
-      SizedBox()
-      ]),
+                SizedBox(height: 20),
+
+                _buildCategoriesList(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoriesList() {
+    return FutureBuilder<List<CategoryModel>>(
+      future: futureCategories,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final categories = snapshot.data!;
+
+        return SizedBox(
+          height: 60,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              print("Image URL: ${category.image}");
+              // Build your category item here
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: index == 0 ? 15 : 0,
+                  right: 15,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = category.name;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: selectedCategory == category.name ? red : grey1,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: selectedCategory == category.name
+                                ? Colors.white
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.network(
+                            category.image,
+                            width: 22,
+                            height: 22,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.fastfood, size: 20);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          category.name,
+                          style: TextStyle(
+                            color: selectedCategory == category.name
+                                ? Colors.white
+                                : Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -74,71 +231,68 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
 
   Container appBanner() {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 160,
-              decoration: BoxDecoration(
-                color: imageBackground,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.only(top: 25, right: 25, left: 25),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            children: [
-                              const TextSpan(
-                                text: "The Fastest In Delivery",
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              TextSpan(
-                                text: " Food",
-                                style: TextStyle(color: red),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: red,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 9,
-                          ),
-                          child: const Text(
-                            " Order Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Image.asset("assets/food-delivery/courier.png"),
-                ],
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 160,
+            decoration: BoxDecoration(
+              color: imageBackground,
+              borderRadius: BorderRadius.circular(20),
             ),
-          ],
-        ),
+            padding: const EdgeInsets.only(top: 25, right: 25, left: 25),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: "The Fastest In Delivery",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: " Food",
+                              style: TextStyle(color: red),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: red,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 9,
+                        ),
+                        child: const Text(
+                          " Order Now",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Image.asset("assets/food-delivery/courier.png"),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
