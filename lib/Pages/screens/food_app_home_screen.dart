@@ -82,6 +82,42 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
                 SizedBox(height: 20),
 
                 _buildCategoriesList(),
+
+                SizedBox(height: 30),
+
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
+
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Popular Now",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+
+                      GestureDetector(
+                        child: Row(
+                          children: [
+                            Text("View All", style: TextStyle(color: orange)),
+                            SizedBox(width: 5,),
+                            Container(
+                              padding: EdgeInsets.all(15),decoration: BoxDecoration(
+                              color: orange,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                             child: Icon(Icons.arrow_forward_ios_rounded,size: 15,color: Colors.white,),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -95,14 +131,10 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
       future: futureCategories,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError ||
-            !snapshot.hasData ||
-            snapshot.data!.isEmpty) {
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
         }
 
@@ -118,12 +150,10 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
               print("Image URL: ${category.image}");
               // Build your category item here
               return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 15 : 0,
-                  right: 15,
-                ),
+                padding: EdgeInsets.only(left: index == 0 ? 15 : 0, right: 15),
                 child: GestureDetector(
                   onTap: () {
+                    handleCategoryTap(category.name);
                     setState(() {
                       selectedCategory = category.name;
                     });
@@ -227,6 +257,15 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
         SizedBox(width: 20),
       ],
     );
+  }
+
+  void handleCategoryTap(String category) {
+    if (selectedCategory == category) {
+      return;
+    }
+    setState(() {
+      selectedCategory = category;
+    });
   }
 
   Container appBanner() {
