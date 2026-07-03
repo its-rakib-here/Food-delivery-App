@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/Pages/screens/profile_screen.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:iconsax/iconsax.dart';
+
+import 'food_app_home_screen.dart';
 
 class AppMainScreen extends StatefulWidget {
   const AppMainScreen({super.key});
@@ -11,9 +14,19 @@ class AppMainScreen extends StatefulWidget {
 }
 
 class _AppMainScreenState extends State<AppMainScreen> {
+int currentIndex=0;
+  final List<Widget> _pages = [
+    FoodAppHomeScreen(),
+    Scaffold(),
+    ProfileScreen(),
+    Scaffold()
+
+    ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: _pages[currentIndex],
       bottomNavigationBar: Container(
         height: 90,
         decoration: BoxDecoration(color: Colors.white),
@@ -38,7 +51,9 @@ class _AppMainScreenState extends State<AppMainScreen> {
                   //we will make this cart item dynamic letter
                   child: CircleAvatar(
                     backgroundColor: red,
+                    radius: 10,
                     child: Text(
+
                       "0",
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
@@ -65,15 +80,15 @@ class _AppMainScreenState extends State<AppMainScreen> {
   }
 
   Widget _buildNavItems(IconData icon, String label, int index) {
-    int currentIndex = 0;
+    // int currentIndex = 0;
     return InkWell(
       onTap: () {
         setState(() {
           currentIndex = index;
         });
       },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             icon,
@@ -85,12 +100,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
             radius: 3,
             backgroundColor: currentIndex == index ? red : Colors.transparent,
           ),
-          // Text(
-          //   label,
-          //   style: TextStyle(
-          //     color: _currentIndex == index ? red : Colors.grey,
-          //   ),
-          // ),
+
         ],
       ),
     );

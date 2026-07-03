@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/Pages/screens/app_main_screen.dart';
+import 'package:food_delivery/Pages/screens/food_app_home_screen.dart';
 import 'package:food_delivery/models/on_bording_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 
@@ -138,7 +140,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                               SizedBox(height: 30),
                               MaterialButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AppMainScreen(),
+                                    ),
+                                  );
+                                },
                                 color: red,
                                 height: 65,
                                 minWidth: 250,
