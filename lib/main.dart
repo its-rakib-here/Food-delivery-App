@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/Pages/screens//home_screen.dart';
+import 'package:food_delivery/Pages/screens//profile_screen.dart';
 import 'package:food_delivery/Pages/auth/login_screen.dart';
+import 'package:food_delivery/Pages/screens/app_main_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'Pages/auth/signup_screen.dart';
@@ -47,7 +48,7 @@ class Authcheck extends StatelessWidget {
         final session = supabae.auth.currentSession;
 
         if (session != null) {
-          return HomeScreen();
+          return AppMainScreen();
         } else {
           return LoginScreen();
         }
