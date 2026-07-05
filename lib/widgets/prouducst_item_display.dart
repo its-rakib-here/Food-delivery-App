@@ -22,6 +22,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
 
         children: [
           Positioned(
+            bottom: 35,
             child: Container(
               height: 180,
               width: size.width * 0.5,
@@ -36,6 +37,55 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                   ),
                 ],
               ),
+            ),
+          ),
+          Container(
+            width: size.width * 0.5,
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipOval(
+                  child: Image.network(
+                    widget.foodModel.imageCard,
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Text(
+                    widget.foodModel.name,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Text(
+                  widget.foodModel.specialItems,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    height: 1.2,
+                  ),
+                ),
+                const Spacer(),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    children: [TextSpan(text: "\$${widget.foodModel.price}")],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
