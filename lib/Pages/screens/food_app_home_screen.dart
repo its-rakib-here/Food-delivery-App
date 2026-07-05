@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/models/product_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/categories_model.dart';
+import '../../widgets/prouducst_item_display.dart';
 
 class FoodAppHomeScreen extends StatefulWidget {
   const FoodAppHomeScreen({super.key});
@@ -14,6 +16,7 @@ class FoodAppHomeScreen extends StatefulWidget {
 
 class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
   late Future<List<CategoryModel>> futureCategories = fetchCatagories();
+  late Future<List<FoodModel>> futureProducts = Future.value([]);
   List<CategoryModel> categories = [];
   String? selectedCategory;
 
@@ -32,10 +35,29 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
         setState(() {
           this.categories = categories;
           selectedCategory = categories[0].name;
+          //fetch products
+          futureProducts = fetchProduct(selectedCategory!);
         });
       }
     } catch (e) {
       print("Error initializing data: $e");
+    }
+  }
+
+  //fetch products
+
+  Future<List<FoodModel>> fetchProduct(String category) async {
+    try {
+      final response = await Supabase.instance.client
+          .from("food_item")
+          .select()
+          .eq("category", category);
+      return (response as List)
+          .map((json) => FoodModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print("Error fetching category : $e");
+      return [];
     }
   }
 
@@ -85,37 +107,90 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
 
                 SizedBox(height: 30),
 
-                Padding(
-                  padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
+                viewAll(),
+                SizedBox(height: 30),
 
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Popular Now",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
+                _buildProudctSection(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                      GestureDetector(
-                        child: Row(
-                          children: [
-                            Text("View All", style: TextStyle(color: orange)),
-                            SizedBox(width: 5,),
-                            Container(
-                              padding: EdgeInsets.all(15),decoration: BoxDecoration(
-                              color: orange,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                             child: Icon(Icons.arrow_forward_ios_rounded,size: 15,color: Colors.white,),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+  Widget _buildProudctSection() {
+    return Expanded(
+      child: FutureBuilder<List<FoodModel>>(
+        future: futureProducts,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError ||
+              !snapshot.hasData ||
+              snapshot.data!.isEmpty) {
+            return Center(child: Text("Error fetching prodcuts "));
+          }
+
+          final products = snapshot.data ?? [];
+          if (products.isEmpty) {
+            return Center(child: Text("No products found"));
+          }
+
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              // print("Image URL: ${product.image}");
+              // Build your category item here
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: index == 0 ? 25 : 0,
+                  right: index == products.length - 1 ? 25 : 0,
+                ),
+                child: ProuducstItemDisplay(foodModel: products[index]),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Padding viewAll() {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
+
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Popular Now",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+
+          GestureDetector(
+            child: Row(
+              children: [
+                Text("View All", style: TextStyle(color: orange)),
+                SizedBox(width: 5),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: orange,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 15,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -265,6 +340,7 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
     }
     setState(() {
       selectedCategory = category;
+      futureProducts = fetchProduct(category);
     });
   }
 
