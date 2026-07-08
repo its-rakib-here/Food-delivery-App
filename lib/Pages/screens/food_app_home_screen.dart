@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/Pages/screens/view_all_product_screen.dart';
 import 'package:food_delivery/models/product_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,6 +28,7 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
     super.initState();
     _initializeData();
   }
+
   Future<List<FoodModel>> fetchProduct(String category) async {
     print("Selected category: $category");
 
@@ -50,6 +52,7 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
       return [];
     }
   }
+
   void _initializeData() async {
     try {
       final categories = await futureCategories;
@@ -66,8 +69,7 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
     }
   }
 
-//fetch category
-
+  //fetch category
 
   Future<List<CategoryModel>> fetchCatagories() async {
     try {
@@ -127,47 +129,6 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
     );
   }
 
-  // Widget _buildProudctSection() {
-  //   return Expanded(child: FutureBuilder<List<FoodModel>>(
-  //       future: futureProducts,
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //         if (snapshot.hasError) {
-  //           return Center(
-  //             child: Text(snapshot.error.toString()),
-  //           );
-  //         }
-  //         final products = snapshot.data ?? [];
-  //         if (products.isEmpty) {
-  //           return const Center(
-  //             child: Text("No products found"),
-  //           );
-  //         }
-  //         return SizedBox(height: 60,
-  //           child: ListView.builder(
-  //               scrollDirection: Axis.horizontal,
-  //               physics: BouncingScrollPhysics(),
-  //               itemCount: products.length,
-  //               itemBuilder: (context, index) {
-  //                 return Padding(padding: EdgeInsetsGeometry.only(
-  //                   left: index == 0 ? 25 : 10,
-  //                   right: index == products.length - 1 ? 25 : 10,
-  //                 ),
-  //                     child: ProuducstItemDisplay(foodModel: products[index],
-  //                     ));
-  //               }),
-  //         );
-  //       }
-  //
-  //   ),
-  //   );
-  //
-  //   }
-
   Widget _buildProudctSection() {
     return SizedBox(
       height: 260,
@@ -175,23 +136,17 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
         future: futureProducts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
+            return Center(child: Text(snapshot.error.toString()));
           }
 
           final products = snapshot.data ?? [];
 
           if (products.isEmpty) {
-            return const Center(
-              child: Text("No products found"),
-            );
+            return const Center(child: Text("No products found"));
           }
 
           return ListView.builder(
@@ -205,9 +160,7 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
                   left: index == 0 ? 25 : 10,
                   right: index == products.length - 1 ? 25 : 10,
                 ),
-                child: ProuducstItemDisplay(
-                  foodModel: product,
-                ),
+                child: ProuducstItemDisplay(foodModel: product),
               );
             },
           );
@@ -233,6 +186,13 @@ class _FoodAppHomeScreenState extends State<FoodAppHomeScreen> {
           ),
 
           GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: ((_) => ViewAllProductScreen())),
+              );
+            },
+
             child: Row(
               children: [
                 Text("View All", style: TextStyle(color: orange)),
