@@ -14,6 +14,8 @@ class ProuducstItemDisplay extends StatefulWidget {
       _ProuducstItemDisplayState();
 }
 
+
+
 class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,6 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
       onTap: () {},
       child: SizedBox(
         width: size.width * .5,
-        height: 270,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -86,7 +87,8 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
 
