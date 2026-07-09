@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../models/product_model.dart';
+import '../../core/models/product_model.dart';
 import '../../widgets/prouducst_item_display.dart';
 
 class ViewAllProductScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/screens/app_main_screen.dart';
 import 'package:food_delivery/Pages/screens/food_app_home_screen.dart';
-import 'package:food_delivery/models/on_bording_model.dart';
+import 'package:food_delivery/core//models/on_bording_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 
 class OnboardingScreen extends StatefulWidget {

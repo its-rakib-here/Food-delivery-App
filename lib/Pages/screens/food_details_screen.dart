@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/models/product_model.dart';
+import 'package:food_delivery/core/models/product_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:readmore/readmore.dart';
 

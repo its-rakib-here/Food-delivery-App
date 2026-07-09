@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/screens/food_details_screen.dart';
-import 'package:food_delivery/models/product_model.dart';
+import 'package:food_delivery/core/models/product_model.dart';
 
 class ProuducstItemDisplay extends StatefulWidget {
   final FoodModel foodModel;

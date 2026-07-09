@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/Pages/screens/view_all_product_screen.dart';
-import 'package:food_delivery/models/product_model.dart';
+import 'package:food_delivery/core/models/product_model.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../models/categories_model.dart';
+// import '../../models/categories_model.dart';
+import '../../core/models/categories_model.dart';
 import '../../widgets/prouducst_item_display.dart';
 
 class FoodAppHomeScreen extends StatefulWidget {
