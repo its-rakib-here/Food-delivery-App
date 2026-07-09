@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/Pages/screens/food_details_screen.dart';
 import 'package:food_delivery/models/product_model.dart';
 
 class ProuducstItemDisplay extends StatefulWidget {
   final FoodModel foodModel;
 
-  const ProuducstItemDisplay({
-    super.key,
-    required this.foodModel,
-  });
+  const ProuducstItemDisplay({super.key, required this.foodModel});
 
   @override
-  State<ProuducstItemDisplay> createState() =>
-      _ProuducstItemDisplayState();
+  State<ProuducstItemDisplay> createState() => _ProuducstItemDisplayState();
 }
-
-
 
 class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
   @override
@@ -22,7 +17,16 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 1000),
+            pageBuilder: (_, __, ___) =>
+                FoodDetailsScreen(products: widget.foodModel),
+          ),
+        );
+      },
       child: SizedBox(
         width: size.width * .5,
         child: Stack(
@@ -53,12 +57,15 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                 width: size.width * .5,
                 child: Column(
                   children: [
-                    ClipOval(
-                      child: Image.network(
-                        widget.foodModel.imageCard,
-                        width: 105,
-                        height: 105,
-                        fit: BoxFit.cover,
+                    Hero(
+                      tag: widget.foodModel.name,
+                      child: ClipOval(
+                        child: Image.network(
+                          widget.foodModel.imageCard,
+                          width: 105,
+                          height: 105,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
 
@@ -88,7 +95,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black,
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
