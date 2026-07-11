@@ -107,7 +107,7 @@ class FoodModel {
     return FoodModel(
       id: json['id'] ?? "",
       imageCard: json['imageCard'] ?? "",
-      imageDetail: json['imageDetail'] ?? "",
+      imageDetail: json['imageDetails'] ?? "",
       name: json['name'] ?? 'Unknown',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       rate: (json['rate'] as num?)?.toDouble() ?? 0.0,

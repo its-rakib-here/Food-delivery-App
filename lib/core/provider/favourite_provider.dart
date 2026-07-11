@@ -12,6 +12,7 @@ class FavouriteNotifier extends Notifier<List<FoodModel>> {
 
   @override
   List<FoodModel> build() {
+    Future.microtask(() => loadFavourites());
     return [];
   }
 
@@ -21,6 +22,9 @@ class FavouriteNotifier extends Notifier<List<FoodModel>> {
 
   Future<void> addFavourite(FoodModel food) async {
     if (userId == null) return;
+
+    if (isFavourite(food)) return;
+
     await _supabase.from("favourite").insert({
       "user_id": userId,
       "product_id": food.id,
@@ -38,7 +42,7 @@ class FavouriteNotifier extends Notifier<List<FoodModel>> {
         .eq("user_id", userId!)
         .eq("product_id", food.id);
 
-    state = state.where((e) => e.name != food.name).toList();
+    state = state.where((e) => e.id != food.id).toList();
   }
 
   /// Toggle Favourite
@@ -51,7 +55,7 @@ class FavouriteNotifier extends Notifier<List<FoodModel>> {
   }
 
   bool isFavourite(FoodModel food) {
-    return state.any((e) => e.name == food.name);
+    return state.any((e) => e.id == food.id);
   }
 
   void clearFavourite() {
@@ -62,14 +66,30 @@ class FavouriteNotifier extends Notifier<List<FoodModel>> {
     if (userId == null) return;
 
     try {
-      final response = await _supabase
-          .from("favourites")
-          .select("product_it")
+      final favouriteResponse = await _supabase
+          .from("favourite")
+          .select("product_id")
           .eq("user_id", userId!);
 
-      _favouriteIds = response.map((e) => e["product_it"] as String).toList();
+      final productIds = favouriteResponse
+          .map((e) => e["product_id"] as String)
+          .toList();
+
+      if (productIds.isEmpty) {
+        state = [];
+        return;
+      }
+
+      final products = await _supabase
+          .from("food_items")
+          .select()
+          .inFilter("id", productIds);
+
+      state = products
+          .map<FoodModel>((e) => FoodModel.fromJson(e))
+          .toList();
     } catch (e) {
-      print("Error loading favourites: $e");
+      print("Load favourite error: $e");
     }
   }
 }

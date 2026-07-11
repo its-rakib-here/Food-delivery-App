@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_delivery/Pages/screens/food_details_screen.dart';
 import 'package:food_delivery/core/models/product_model.dart';
+import 'package:food_delivery/core/provider/favourite_provider.dart';
 
-class ProuducstItemDisplay extends StatefulWidget {
+import '../utils/consts.dart';
+
+class ProuducstItemDisplay extends ConsumerWidget {
   final FoodModel foodModel;
 
-  const ProuducstItemDisplay({super.key, required this.foodModel});
+  const ProuducstItemDisplay({
+    super.key,
+    required this.foodModel,
+  });
 
   @override
-  State<ProuducstItemDisplay> createState() => _ProuducstItemDisplayState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
 
-class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
-  @override
-  Widget build(BuildContext context) {
+    final favourites = ref.watch(favouriteProvider);
+
+    final notifier = ref.read(favouriteProvider.notifier);
+
+    final isFavourite = favourites.any(
+          (item) => item.id == foodModel.id,
+    );
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
@@ -23,7 +33,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 1000),
             pageBuilder: (_, __, ___) =>
-                FoodDetailsScreen(products: widget.foodModel),
+                FoodDetailsScreen(products: foodModel),
           ),
         );
       },
@@ -58,10 +68,10 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                 child: Column(
                   children: [
                     Hero(
-                      tag: widget.foodModel.name,
+                      tag: foodModel.name,
                       child: ClipOval(
                         child: Image.network(
-                          widget.foodModel.imageCard,
+                          foodModel.imageCard,
                           width: 105,
                           height: 105,
                           fit: BoxFit.cover,
@@ -74,7 +84,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                     SizedBox(
                       height: 44,
                       child: Text(
-                        widget.foodModel.name,
+                        foodModel.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
@@ -88,7 +98,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                     const SizedBox(height: 5),
 
                     Text(
-                      widget.foodModel.specialItems,
+                      foodModel.specialItems,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
@@ -102,7 +112,7 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
                     const Spacer(),
 
                     Text(
-                      "\$${widget.foodModel.price}",
+                      "\$${foodModel.price}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -116,12 +126,18 @@ class _ProuducstItemDisplayState extends State<ProuducstItemDisplay> {
             Positioned(
               top: 10,
               right: 10,
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.red.shade100,
-                child: Image.asset(
-                  "assets/food-delivery/icon/fire.png",
-                  width: 18,
+              child: GestureDetector(
+                onTap: () async{
+                  await notifier.toggleFavourite(foodModel);
+                },
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: isFavourite ? Colors.red[100] : Colors.transparent,
+                  child: isFavourite ?
+                  Image.asset(
+                    "assets/food-delivery/icon/fire.png",
+                    width: 18,
+                  ): Icon( Icons.local_fire_department,color: red),
                 ),
               ),
             ),

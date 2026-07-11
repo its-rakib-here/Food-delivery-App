@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_delivery/core/models/on_bording_model.dart';
 import 'package:food_delivery/core/models/product_model.dart';
+import 'package:food_delivery/core/provider/favourite_provider.dart';
 import 'package:food_delivery/widgets/snack_bar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
 
-class FavouriteScreen extends StatefulWidget {
+class FavouriteScreen extends ConsumerStatefulWidget {
   const FavouriteScreen({super.key});
 
   @override
-  State<FavouriteScreen> createState() => _FavouriteScreenState();
+ ConsumerState <FavouriteScreen> createState() => _FavouriteScreenState();
 }
 
-class _FavouriteScreenState extends State<FavouriteScreen> {
-  final userId = supabase.auth.currentUser?.id;
+class _FavouriteScreenState extends ConsumerState<FavouriteScreen> {
+
 
   @override
   Widget build(BuildContext context) {
+
+    final userId = supabase.auth.currentUser?.id;
+    final favourites= ref.watch(favouriteProvider);
+    final notifier = ref.read(favouriteProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -126,11 +132,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                               ),
                             ),
                             Positioned(
-                              top: 10,
+                              top: 40,
                               right: 10,
                               child: GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   // Delete favourite
+                                  await notifier.removeFavourite(items);
+
                                 },
                                 child: const Icon(
                                   Icons.delete,
@@ -151,13 +159,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   }
 
   Future<List<FoodModel>> _fetchProducts(
-    List<Map<String, dynamic>> favourites,
-  ) async {
-    final List<String> productNames = favourites
+      List<Map<String, dynamic>> favourites,
+      ) async {
+    final List<String> productIds = favourites
         .map((fav) => fav["product_id"] as String)
         .toList();
 
-    if (productNames.isEmpty) {
+    if (productIds.isEmpty) {
       return [];
     }
 
@@ -165,11 +173,9 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       final response = await supabase
           .from("food_items")
           .select()
-          .inFilter("name", productNames);
+          .inFilter("id", productIds);
 
-      if (response.isEmpty) {
-        return [];
-      }
+      debugPrint("Response: $response");
 
       return (response as List)
           .map((json) => FoodModel.fromJson(json))

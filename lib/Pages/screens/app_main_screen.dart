@@ -20,7 +20,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
   final List<Widget> _pages = [
     const FoodAppHomeScreen(),
     const FavouriteScreen(),
-    const ProfileScreen(),
+     ProfileScreen(),
     const Scaffold(),
   ];
 

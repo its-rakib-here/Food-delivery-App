@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:food_delivery/core/provider/favourite_provider.dart';
 import 'package:food_delivery/services/auth_service.dart';
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+
+AuthService authService = AuthService();
+
+class ProfileScreen extends ConsumerWidget {
+  ProfileScreen({super.key});
+
 
   @override
-  State<ProfileScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<ProfileScreen> {
-  AuthService authService = AuthService();
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home Screen"),
-        centerTitle: true,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                authService.logout(context);
+                ref.invalidate(favouriteProvider);
+              },
+              child: Icon(Icons.exit_to_app),
+            ),
+          ],
+        ),
       ),
-
-      body: Center(child:ElevatedButton(onPressed: (){
-        authService.logout(context);
-      }, child: Icon(Icons.logout)) )
-
     );
   }
 }
