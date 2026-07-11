@@ -1,39 +1,39 @@
-class CartModel{
-
-  final String id;
+class CartModel {
+  final int? id;
+  final DateTime? createdAt;
   final String productId;
-  final Map<String,dynamic> productData;
+  final Map<String, dynamic> productData;
   int quantity;
   final String userId;
 
   CartModel({
-    required this.id,
+    this.id,
+    this.createdAt,
     required this.productId,
     required this.productData,
     required this.quantity,
     required this.userId,
   });
 
-  factory CartModel.fromMap(Map<String,dynamic>map){
+  factory CartModel.fromMap(Map<String, dynamic> map) {
     return CartModel(
-      id: map['id'],
-      productId: map['productId'],
-      productData: map['productData'],
-      quantity: map['quantity'],
-      userId: map['userId'],
+      id: map['id'] as int?,
+      createdAt: map['created_at'] == null
+          ? null
+          : DateTime.parse(map['created_at']),
+      productId: map['product_id'] as String,
+      productData: Map<String, dynamic>.from(map['product_data']),
+      quantity: map['quantity'] as int,
+      userId: map['user_id'] as String,
     );
   }
 
-  Map<String,dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-      'id':id,
-      'productId':productId,
-      'productData':productData,
-      'quantity':quantity,
-      'userId':userId,
+      'user_id': userId,
+      'product_id': productId,
+      'product_data': productData,
+      'quantity': quantity,
     };
   }
-
-
-
 }

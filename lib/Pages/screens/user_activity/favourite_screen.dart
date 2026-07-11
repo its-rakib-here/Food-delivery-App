@@ -85,13 +85,16 @@ class _FavouriteScreenState extends ConsumerState<FavouriteScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Container(
-                                      width: 110,
-                                      height: 90,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(items.imageCard),
-                                          fit: BoxFit.cover,
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(25),
+                                      child: Container(
+                                        width: 110,
+                                        height: 90,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(items.imageCard),
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),

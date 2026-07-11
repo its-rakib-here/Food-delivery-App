@@ -1,31 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_delivery/Pages/screens/profile_screen.dart';
+import 'package:food_delivery/Pages/screens/user_activity/cart_screen.dart';
 import 'package:food_delivery/Pages/screens/user_activity/favourite_screen.dart';
 import 'package:food_delivery/utils/consts.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../../core/provider/cart_provider.dart';
 import 'food_app_home_screen.dart';
 
-class AppMainScreen extends StatefulWidget {
+class AppMainScreen extends ConsumerStatefulWidget {
   const AppMainScreen({super.key});
 
   @override
-  State<AppMainScreen> createState() => _AppMainScreenState();
+  ConsumerState<AppMainScreen> createState() => _AppMainScreenState();
 }
 
-class _AppMainScreenState extends State<AppMainScreen> {
+class _AppMainScreenState extends ConsumerState<AppMainScreen> {
   int currentIndex = 0;
 
   final List<Widget> _pages = [
     const FoodAppHomeScreen(),
     const FavouriteScreen(),
      ProfileScreen(),
+     CartScreen(),
     const Scaffold(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final cartItems = ref.watch(cartProvider);
+    final cartNotifier = ref.read(cartProvider.notifier);
     return Scaffold(
       body: _pages[currentIndex],
 
@@ -64,12 +70,14 @@ class _AppMainScreenState extends State<AppMainScreen> {
                       Positioned(
                         top: 10,
                         right: 18,
-                        child: CircleAvatar(
+                        child: cartItems.isEmpty
+                            ? const SizedBox()
+                            : CircleAvatar(
                           radius: 9,
                           backgroundColor: red,
-                          child: const Text(
-                            "0",
-                            style: TextStyle(
+                          child: Text(
+                            cartNotifier.totalItems.toString(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                             ),
