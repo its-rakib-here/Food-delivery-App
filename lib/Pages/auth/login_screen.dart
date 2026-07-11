@@ -4,7 +4,7 @@ import 'package:food_delivery/Pages/auth/signup_screen.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/signup_button.dart';
 import '../../widgets/snack_bar.dart';
-import '../screens/onboarding_screen.dart' ;
+import '../screens/onboarding_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +17,6 @@ class _SignupScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-
   bool isLoding = false;
   bool isPasswordHidden = true;
 
@@ -27,7 +26,7 @@ class _SignupScreenState extends State<LoginScreen> {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    if(!mounted) return;
+    if (!mounted) return;
 
     setState(() {
       isLoding = true;
@@ -35,20 +34,18 @@ class _SignupScreenState extends State<LoginScreen> {
 
     final result = await _authSerice.login(email, password);
 
+    if (!mounted) return;
+
+    setState(() {
+      isLoding = false;
+    });
+
     if (result == null) {
-      setState(() {
-        isLoding = false;
-      });
-      showSnackbar(context, "Login up successful");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OnboardingScreen()));
+      showSnackbar(context, "Login successful");
     } else {
-      setState(() {
-        isLoding = false;
-      });
-      showSnackbar(context, "Signup Failed: $result");
+      showSnackbar(context, result);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +64,14 @@ class _SignupScreenState extends State<LoginScreen> {
               ),
 
               TextField(
-                controller:emailController ,
+                controller: emailController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "Email",
                 ),
               ),
 
-              SizedBox(height: 20,),
+              SizedBox(height: 20),
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
@@ -95,30 +92,44 @@ class _SignupScreenState extends State<LoginScreen> {
                 ),
                 obscureText: isPasswordHidden,
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 20),
 
-              SizedBox(width: double.maxFinite,
-                  child: SignupButton(onTap: (){
+              SizedBox(
+                width: double.maxFinite,
+                child: SignupButton(
+                  onTap: () {
                     _login();
-                  }, buttonText: "Login",),),
-              SizedBox(height: 20,),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Text("Don't have an account?",
-                    style: TextStyle(color: Colors.black, fontSize: 18)
-                ),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => SignupScreen()),
-                        );
                   },
+                  buttonText: "Login",
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Don't have an account?",
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => SignupScreen()),
+                      );
+                    },
 
-                  child: Text("Create an account",
-                      style: TextStyle(color: Colors.blue, fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-                )
-              ]
-              )
+                    child: Text(
+                      "Create an account",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

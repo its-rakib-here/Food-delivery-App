@@ -21,8 +21,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final AuthService _authSerice = AuthService();
 
   void _signUp() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       showSnackbar(context, "Please fill in all fields");
@@ -34,23 +34,24 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
+    if (!mounted) return;
+
     setState(() {
       isLoding = true;
     });
 
     final result = await _authSerice.signup(email, password);
 
+    if (!mounted) return;
+
+    setState(() {
+      isLoding = false;
+    });
+
     if (result == null) {
-      setState(() {
-        isLoding = false;
-      });
-      showSnackbar(context, "Sign up successful");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+      showSnackbar(context, "Account created successfully");
     } else {
-      setState(() {
-        isLoding = false;
-      });
-      showSnackbar(context, "Signup Failed: $result");
+      showSnackbar(context, result);
     }
   }
 

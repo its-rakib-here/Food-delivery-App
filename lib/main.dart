@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_delivery/Pages/screens//profile_screen.dart';
 import 'package:food_delivery/Pages/auth/login_screen.dart';
@@ -9,9 +10,12 @@ import 'Pages/auth/signup_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+
   await Supabase.initialize(
-    url: "https://xqlbbezpqglsokhcompx.supabase.co",
-    publishableKey: "sb_publishable_OTeKJaRCRECMnw7xsGP9bw_nJwp9bET",
+    url: dotenv.env['SUPABASE_URL']!,
+    publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
   );
 
   runApp(const MyApp());
@@ -42,22 +46,32 @@ class MyApp extends StatelessWidget {
 }
 
 class Authcheck extends StatelessWidget {
-  final supabae = Supabase.instance.client;
   Authcheck({super.key});
+
+  final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: supabae.auth.onAuthStateChange,
+    return StreamBuilder<AuthState>(
+      stream: supabase.auth.onAuthStateChange,
       builder: (context, snapshot) {
-        final session = supabae.auth.currentSession;
-
-        if (session != null) {
-          return AppMainScreen();
-        } else {
-          return LoginScreen();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
+
+        final session = supabase.auth.currentSession;
+
+        if (session == null) {
+          return const LoginScreen();
+        }
+
+        return const AppMainScreen();
       },
     );
   }
 }
+
