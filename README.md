@@ -1,5 +1,7 @@
 # 🍔 Food Delivery App
 
+[📥 Download Latest APK][(https://github.com/its-rakib-here/Food-delivery-App/releases/tag/v1.0.0)]
+
 This is a food delivery application that I'm building with Flutter as a way to improve my mobile app development skills. The project focuses on creating a clean UI and learning how to build a real-world application using Supabase as the backend and Riverpod for state management.
 
 Although the project is still under development, the core features are already working, and I'm continuously adding new functionality.
